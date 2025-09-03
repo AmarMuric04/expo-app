@@ -2,10 +2,8 @@ import unusedImportsPlugin from 'eslint-plugin-unused-imports';
 import perfectionistPlugin from 'eslint-plugin-perfectionist';
 import prettierPlugin from 'eslint-config-prettier/flat';
 import { configs as tsconfigs } from 'typescript-eslint';
-import reactHooksPlugin from 'eslint-plugin-react-hooks';
 import tailwindPlugin from 'eslint-plugin-tailwindcss';
 import expoConfig from 'eslint-config-expo/flat.js';
-import jsxA11yPlugin from 'eslint-plugin-jsx-a11y';
 import reactPlugin from 'eslint-plugin-react';
 // https://docs.expo.dev/guides/using-eslint/
 import { defineConfig } from 'eslint/config';
@@ -20,28 +18,14 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 export default defineConfig([
   expoConfig,
   perfectionistPlugin.configs['recommended-line-length'],
-  jsxA11yPlugin.flatConfigs.strict,
 
   {
-    files: ['**/*.{jsx,tsx,js,ts}'],
     ...reactPlugin.configs.flat.recommended,
     rules: {
       ...reactPlugin.configs.flat.recommended.rules,
-      'react-hooks/rules-of-hooks': 'error',
-      'react-hooks/exhaustive-deps': 'warn',
       'react/react-in-jsx-scope': 'off',
     },
-    languageOptions: {
-      ...reactPlugin.configs.flat.recommended.languageOptions,
-      globals: {
-        ...globals.serviceworker,
-        ...globals.browser,
-      },
-    },
-    plugins: {
-      ...reactPlugin.configs.flat.recommended.plugins,
-      'react-hooks': reactHooksPlugin,
-    },
+    files: ['**/*.{jsx,tsx,js,ts}'],
   },
 
   {
@@ -63,7 +47,7 @@ export default defineConfig([
         tsconfigRootDir: __dirname,
         project: 'tsconfig.json',
       },
-      globals: { ...globals.browser, ...globals.node },
+      globals: globals.node,
     },
   },
 
