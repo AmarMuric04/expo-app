@@ -2,7 +2,9 @@ import unusedImportsPlugin from 'eslint-plugin-unused-imports';
 import perfectionistPlugin from 'eslint-plugin-perfectionist';
 import prettierPlugin from 'eslint-config-prettier/flat';
 import { configs as tsconfigs } from 'typescript-eslint';
+import boundariesPlugin from 'eslint-plugin-boundaries';
 import tailwindPlugin from 'eslint-plugin-tailwindcss';
+import noSecretsPlugin from 'eslint-plugin-no-secrets';
 import expoConfig from 'eslint-config-expo/flat.js';
 import reactPlugin from 'eslint-plugin-react';
 // https://docs.expo.dev/guides/using-eslint/
@@ -20,12 +22,16 @@ export default defineConfig([
   perfectionistPlugin.configs['recommended-line-length'],
 
   {
+    ignores: ['dist/*', 'node_modules/*', '.expo/*'],
+  },
+
+  {
     ...reactPlugin.configs.flat.recommended,
     rules: {
       ...reactPlugin.configs.flat.recommended.rules,
       'react/react-in-jsx-scope': 'off',
     },
-    files: ['**/*.{jsx,tsx,js,ts}'],
+    files: ['**/app/**/*.tsx', '**/components/**/*.tsx'],
   },
 
   {
@@ -36,17 +42,34 @@ export default defineConfig([
     },
   },
 
-  ...tsconfigs.strictTypeChecked.map(config => ({
+  ...tsconfigs.strict.map(config => ({
     ...config,
-    files: ['**/*.{ts,tsx}'],
+    files: ['**/app/**/*.tsx', '**/components/**/*.tsx'],
   })),
 
   {
+    settings: {
+      'boundaries/elements': [
+        {
+          pattern: 'app/**',
+          type: 'app',
+        },
+        {
+          pattern: 'components/**',
+          type: 'components',
+        },
+        {
+          pattern: 'utils/**',
+          type: 'utils',
+        },
+        {
+          pattern: 'src/**',
+          type: 'src',
+        },
+      ],
+      'boundaries/basePath': 'src',
+    },
     languageOptions: {
-      parserOptions: {
-        tsconfigRootDir: __dirname,
-        project: 'tsconfig.json',
-      },
       globals: globals.node,
     },
   },
@@ -87,13 +110,16 @@ export default defineConfig([
 
   {
     rules: {
+      ...boundariesPlugin.configs.strict.rules,
       '@typescript-eslint/no-empty-function': 'error',
+      'no-secrets/no-pattern-match': 'error',
+      'no-secrets/no-secrets': 'error',
     },
-    files: ['**/app/**/*.{ts,tsx}'],
-  },
-
-  {
-    ignores: ['dist/*'],
+    plugins: {
+      'no-secrets': noSecretsPlugin,
+      boundaries: boundariesPlugin,
+    },
+    files: ['**/src/**/*.{ts,tsx}'],
   },
 
   {
