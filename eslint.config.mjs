@@ -59,12 +59,16 @@ export default defineConfig([
           type: 'components',
         },
         {
-          pattern: 'utils/**',
-          type: 'utils',
+          pattern: 'utility/**',
+          type: 'utility',
         },
         {
-          pattern: 'src/**',
-          type: 'src',
+          pattern: 'types/**',
+          type: 'types',
+        },
+        {
+          pattern: 'misc/**',
+          type: 'misc',
         },
       ],
       'boundaries/basePath': 'src',

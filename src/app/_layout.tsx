@@ -1,8 +1,7 @@
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import Feather from '@expo/vector-icons/Feather';
-
-import '@/global.css';
+import '@misc/global.css';
 import { Tabs } from 'expo-router';
 
 export default function RootLayout() {
