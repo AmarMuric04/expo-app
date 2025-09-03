@@ -2,26 +2,42 @@ import unusedImportsPlugin from 'eslint-plugin-unused-imports';
 import perfectionistPlugin from 'eslint-plugin-perfectionist';
 import prettierPlugin from 'eslint-config-prettier/flat';
 import { configs as tsconfigs } from 'typescript-eslint';
+import tailwindPlugin from 'eslint-plugin-tailwindcss';
 import expoConfig from 'eslint-config-expo/flat.js';
 // https://docs.expo.dev/guides/using-eslint/
 import { defineConfig } from 'eslint/config';
 import nimaPlugin from 'eslint-plugin-nima';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
 import globals from 'globals';
 import js from '@eslint/js';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig([
   expoConfig,
   perfectionistPlugin.configs['recommended-line-length'],
-  js.configs.recommended,
 
-  ...tsconfigs.recommended.map(config => ({
+  {
+    ...js.configs.recommended,
+    rules: {
+      ...js.configs.recommended.rules,
+      'import/no-unresolved': 'off',
+    },
+  },
+
+  ...tsconfigs.strictTypeChecked.map(config => ({
     ...config,
     files: ['**/*.{ts,tsx}'],
   })),
 
   {
     languageOptions: {
-      globals: globals.node,
+      parserOptions: {
+        tsconfigRootDir: __dirname,
+        project: 'tsconfig.json',
+      },
+      globals: { ...globals.browser, ...globals.node },
     },
   },
 
@@ -30,7 +46,7 @@ export default defineConfig([
     rules: {
       ...nimaPlugin.configs['flat/recommended'].rules,
       'nima/prefer-export-under-component': 'off',
-      'nima/restrict-console-methods': 'off',
+      'nima/restrict-console-methods': 'warn',
       'nima/prefer-react-fc': 'off',
     },
   },
@@ -51,6 +67,18 @@ export default defineConfig([
     },
     plugins: { 'unused-imports': unusedImportsPlugin },
     files: ['**/*'],
+  },
+
+  ...tailwindPlugin.configs['flat/recommended'].map(config => ({
+    ...config,
+    files: ['**/*.tsx'],
+  })),
+
+  {
+    rules: {
+      '@typescript-eslint/no-empty-function': 'error',
+    },
+    files: ['**/app/**/*.{ts,tsx}'],
   },
 
   {
