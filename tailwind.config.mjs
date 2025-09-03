@@ -6,7 +6,8 @@ export default {
   theme: {
     extend: {
       colors: {
-        murga: '#8e44ad',
+        secondary: '#4A90E2',
+        primary: '#4E944F',
       },
     },
   },
