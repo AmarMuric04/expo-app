@@ -1,7 +1,7 @@
 declare global {
   type ShoppingListItemType = {
-    updatedAt: number | null;
     completedAt: number | null;
+    updatedAt: number | null;
     name: string;
     id: string;
   };
