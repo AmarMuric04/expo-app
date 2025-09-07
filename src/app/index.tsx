@@ -13,71 +13,85 @@ import dayjs from 'dayjs';
 const initialList: ShoppingListItemType[] = [
   {
     completedAt: null,
+    updatedAt: null,
     name: 'Tea',
     id: '0',
   },
   {
     completedAt: null,
+    updatedAt: null,
     name: 'Coffee',
     id: '1',
   },
   {
     completedAt: null,
+    updatedAt: null,
     name: 'Milk',
     id: '2',
   },
   {
     completedAt: null,
+    updatedAt: null,
     name: 'Milk',
     id: '3',
   },
   {
     completedAt: null,
+    updatedAt: null,
     name: 'Milk',
     id: '4',
   },
   {
     completedAt: null,
+    updatedAt: null,
     name: 'Milk',
     id: '5',
   },
   {
     completedAt: null,
+    updatedAt: null,
     name: 'Milk',
     id: '6',
   },
   {
     completedAt: null,
+    updatedAt: null,
     name: 'Milk',
     id: '7',
   },
   {
     completedAt: null,
+    updatedAt: null,
     name: 'Milk',
     id: '8',
   },
   {
     completedAt: null,
+    updatedAt: null,
     name: 'Milk',
     id: '9',
   },
   {
     completedAt: null,
+    updatedAt: null,
     name: 'Milk',
     id: '10',
   },
   {
     completedAt: null,
+    updatedAt: null,
     name: 'Milk',
     id: '11',
   },
   {
     completedAt: null,
+    updatedAt: null,
     name: 'Milk',
     id: '12',
   },
   {
     completedAt: null,
+    updatedAt: null,
     name: 'Milk',
     id: '13',
   },
@@ -103,14 +117,34 @@ export default function HomeScreen() {
 
   const handleComplete = (id: string) => {
     setShoppingList(prev => {
-      const completedItemIndex = prev.findIndex(
+      const completedItem = prev.findIndex(
         prevShoppingItem => prevShoppingItem.id === id,
       );
+
       const newPrev = [...prev];
-      newPrev[completedItemIndex] = {
-        ...prev[completedItemIndex],
+      newPrev[completedItem] = {
+        ...prev[completedItem],
         completedAt: dayjs().unix(),
+        updatedAt: dayjs().unix(),
       };
+
+      return newPrev;
+    });
+  };
+
+  const handleUncomplete = (id: string) => {
+    setShoppingList(prev => {
+      const completedItem = prev.findIndex(
+        prevShoppingItem => prevShoppingItem.id === id,
+      );
+
+      const newPrev = [...prev];
+      newPrev[completedItem] = {
+        ...prev[completedItem],
+        updatedAt: dayjs().unix(),
+        completedAt: null,
+      };
+
       return newPrev;
     });
   };
@@ -130,11 +164,13 @@ export default function HomeScreen() {
       const completedItemIndex = prev.findIndex(
         prevShoppingItem => prevShoppingItem.id === id,
       );
+
       const newPrev = [...prev];
       newPrev[completedItemIndex] = {
         ...prev[completedItemIndex],
         name: value,
       };
+
       return newPrev;
     });
   };
@@ -173,6 +209,9 @@ export default function HomeScreen() {
             onEdit={(value: string) => {
               handleEdit({ id: item.id, value });
             }}
+            onUncomplete={() => {
+              handleUncomplete(item.id);
+            }}
             onComplete={() => {
               handleComplete(item.id);
             }}
@@ -182,13 +221,27 @@ export default function HomeScreen() {
             shoppingItem={item}
           />
         )}
+        data={filteredShoppingList.sort((a, b) => {
+          if (a.completedAt && b.completedAt) {
+            return a.completedAt - b.completedAt;
+          }
+
+          if (a.completedAt && !b.completedAt) {
+            return 1;
+          }
+
+          if (!a.completedAt && b.completedAt) {
+            return -1;
+          }
+
+          return 0;
+        })}
         ListEmptyComponent={
           <View className="flex-1 items-center text-center">
             <Text>No items match these filters.</Text>
           </View>
         }
         contentContainerClassName="mb-1"
-        data={filteredShoppingList}
         className="flex-1"
       />
     </View>

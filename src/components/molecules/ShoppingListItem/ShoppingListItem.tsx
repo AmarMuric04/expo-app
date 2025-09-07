@@ -6,12 +6,12 @@ import {
   Text,
   View,
 } from 'react-native';
+import { useEffect, Fragment, useState, useRef } from 'react';
 import LocalizedFormat from 'dayjs/plugin/localizedFormat';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import Fontisto from '@expo/vector-icons/Fontisto';
 import Entypo from '@expo/vector-icons/Entypo';
-import { Fragment, useState } from 'react';
 import { cx } from '@utility';
 import dayjs from 'dayjs';
 
@@ -20,12 +20,14 @@ dayjs.extend(LocalizedFormat);
 type Props = {
   shoppingItem: ShoppingListItemType;
   onEdit: (value: string) => void;
+  onUncomplete: () => void;
   onComplete: () => void;
   onDelete: () => void;
 };
 
 export const ShoppingListItem = ({
   shoppingItem,
+  onUncomplete,
   onComplete,
   onDelete,
   onEdit,
@@ -33,7 +35,15 @@ export const ShoppingListItem = ({
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState('');
 
+  const inputRef = useRef<TextInput | null>(null);
+
   const isCompleted = typeof shoppingItem.completedAt === 'number';
+
+  useEffect(() => {
+    if (isEditing && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [isEditing]);
 
   const handleDelete = () => {
     Alert.alert(
@@ -76,6 +86,10 @@ export const ShoppingListItem = ({
   };
 
   const handleFinishEdit = () => {
+    if (editValue === '') {
+      return;
+    }
+
     onEdit(editValue);
     setIsEditing(false);
   };
@@ -90,18 +104,24 @@ export const ShoppingListItem = ({
       return;
     }
 
-    onComplete();
+    if (shoppingItem.completedAt) {
+      onUncomplete();
+    }
+
+    if (!shoppingItem.completedAt) {
+      onComplete();
+    }
   };
 
   return (
     <Pressable
-      className={cx('border-b border-gray-300 py-4', {
+      className={cx('border-b border-gray-300 h-16 justify-center flex-1', {
         'opacity-50 bg-gray-240 border-gray-300': isCompleted,
       })}
       onPress={handleToggleIsCompleted}
     >
-      <View className="w-full flex-row items-center justify-between px-4">
-        <View className="flex-row items-center gap-2">
+      <View className="flex-row items-center justify-between px-4">
+        <View className="flex-1 flex-row items-center gap-2">
           <Fontisto
             name={isCompleted ? 'checkbox-active' : 'checkbox-passive'}
             color="black"
@@ -109,16 +129,18 @@ export const ShoppingListItem = ({
           />
           {isEditing ? (
             <TextInput
-              className="mb-1 border-b border-primary pr-4 text-xl"
+              className="mb-1.5 flex-1 border-b pr-4 text-xl"
               defaultValue={shoppingItem.name}
               onChangeText={setEditValue}
               placeholder="E.g. Coffee"
+              ref={inputRef}
             />
           ) : (
             <Text
-              className={cx('text-xl italic', {
+              className={cx('text-xl flex-1', {
                 'line-through text-gray-500': isCompleted,
               })}
+              numberOfLines={1}
             >
               {shoppingItem.name}
             </Text>
