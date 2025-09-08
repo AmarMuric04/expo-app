@@ -132,7 +132,7 @@ export default function HomeScreen() {
     });
   };
 
-  const handleUncomplete = (id: string) => {
+  const handleIncomplete = (id: string) => {
     setShoppingList(prev => {
       const completedItem = prev.findIndex(
         prevShoppingItem => prevShoppingItem.id === id,
@@ -176,10 +176,10 @@ export default function HomeScreen() {
   };
 
   return (
-    <View className="flex-1">
+    <View className="flex-1 bg-primary/50">
       <View className="relative">
         <TextInput
-          className="m-3 rounded-full border border-gray-300 bg-white p-4"
+          className="m-3 rounded-full border border-primary/50 bg-white p-4"
           onSubmitEditing={handleSearch}
           onChangeText={setSearchValue}
           placeholder="E.g. Coffee"
@@ -209,8 +209,8 @@ export default function HomeScreen() {
             onEdit={(value: string) => {
               handleEdit({ id: item.id, value });
             }}
-            onUncomplete={() => {
-              handleUncomplete(item.id);
+            onIncomplete={() => {
+              handleIncomplete(item.id);
             }}
             onComplete={() => {
               handleComplete(item.id);

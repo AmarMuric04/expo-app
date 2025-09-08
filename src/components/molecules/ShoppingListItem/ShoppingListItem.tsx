@@ -20,14 +20,14 @@ dayjs.extend(LocalizedFormat);
 type Props = {
   shoppingItem: ShoppingListItemType;
   onEdit: (value: string) => void;
-  onUncomplete: () => void;
+  onIncomplete: () => void;
   onComplete: () => void;
   onDelete: () => void;
 };
 
 export const ShoppingListItem = ({
   shoppingItem,
-  onUncomplete,
+  onIncomplete,
   onComplete,
   onDelete,
   onEdit,
@@ -105,7 +105,7 @@ export const ShoppingListItem = ({
     }
 
     if (shoppingItem.completedAt) {
-      onUncomplete();
+      onIncomplete();
     }
 
     if (!shoppingItem.completedAt) {
@@ -115,8 +115,8 @@ export const ShoppingListItem = ({
 
   return (
     <Pressable
-      className={cx('border-b border-gray-300 h-16 justify-center flex-1', {
-        'opacity-50 bg-gray-240 border-gray-300': isCompleted,
+      className={cx('border-b border-primary/50 h-16 justify-center flex-1', {
+        'opacity-50 bg-gray-240': isCompleted,
       })}
       onPress={handleToggleIsCompleted}
     >
@@ -127,18 +127,20 @@ export const ShoppingListItem = ({
             color="black"
             size={24}
           />
-          {isEditing ? (
+          {isEditing && (
             <TextInput
-              className="mb-1.5 flex-1 border-b pr-4 text-xl"
+              className="mb-1.5 flex-1 border-b pr-4 text-xl mr-8"
               defaultValue={shoppingItem.name}
               onChangeText={setEditValue}
               placeholder="E.g. Coffee"
               ref={inputRef}
             />
-          ) : (
+          )}
+
+          {!isEditing && (
             <Text
               className={cx('text-xl flex-1', {
-                'line-through text-gray-500': isCompleted,
+                'line-through text-black/70': isCompleted,
               })}
               numberOfLines={1}
             >
@@ -168,6 +170,7 @@ export const ShoppingListItem = ({
               </TouchableOpacity>
             </Fragment>
           )}
+
           {!isCompleted && !isEditing && (
             <Fragment>
               <TouchableOpacity onPress={handleStartEdit}>
