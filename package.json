@@ -10,9 +10,11 @@
     "web": "expo start --web",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
+    "typecheck": "tsc --noEmit",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx}\"",
     "prepare": "husky",
-    "sanitize": "npm run lint:fix && npm run format"
+    "sanitize": "npm run lint:fix && npm run format",
+    "validate": "npm run lint && npm run typecheck"
   },
   "dependencies": {
     "@expo/vector-icons": "^14.1.0",

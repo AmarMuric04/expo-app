@@ -129,7 +129,7 @@ export const ShoppingListItem = ({
           />
           {isEditing && (
             <TextInput
-              className="mb-1.5 flex-1 border-b pr-4 text-xl mr-8"
+              className="mb-1.5 mr-8 flex-1 border-b pr-4 text-xl"
               defaultValue={shoppingItem.name}
               onChangeText={setEditValue}
               placeholder="E.g. Coffee"
