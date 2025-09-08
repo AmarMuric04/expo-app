@@ -10,12 +10,8 @@ import reactPlugin from 'eslint-plugin-react';
 // https://docs.expo.dev/guides/using-eslint/
 import { defineConfig } from 'eslint/config';
 import nimaPlugin from 'eslint-plugin-nima';
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
 import globals from 'globals';
 import js from '@eslint/js';
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig([
   expoConfig,
