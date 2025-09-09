@@ -5,8 +5,6 @@ import '@misc/global.css';
 import { Tabs } from 'expo-router';
 
 export default function RootLayout() {
-  console.log(123);
-
   return (
     <Tabs
       screenOptions={{
