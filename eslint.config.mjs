@@ -7,7 +7,6 @@ import tailwindPlugin from 'eslint-plugin-tailwindcss';
 import noSecretsPlugin from 'eslint-plugin-no-secrets';
 import expoConfig from 'eslint-config-expo/flat.js';
 import reactPlugin from 'eslint-plugin-react';
-// https://docs.expo.dev/guides/using-eslint/
 import { defineConfig } from 'eslint/config';
 import nimaPlugin from 'eslint-plugin-nima';
 import globals from 'globals';
