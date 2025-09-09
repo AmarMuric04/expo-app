@@ -1,0 +1,71 @@
+name: Scheduled npm audit
+
+on:
+  schedule:
+    - cron: '0 1 * * 1,4'
+
+jobs:
+  audit-and-report:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run npm audit
+        id: audit
+        run: |
+          npm audit --json > npm-audit.json
+        continue-on-error: true
+
+      - name: Create issue if vulnerabilities found
+        if: steps.audit.outcome == 'failure'
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs');
+            const auditReport = JSON.parse(fs.readFileSync('npm-audit.json', 'utf8'));
+
+            const title = `Security Vulnerabilities Found by npm audit on ${new Date().toLocaleDateString()}`;
+            const summary = auditReport.metadata.vulnerabilities;
+            const details = Object.entries(auditReport.vulnerabilities)
+              .map(([pkg, vulns]) => {
+                const vulnDetails = vulns.via.map(v => {
+                  if (typeof v === 'string') {
+                    return `- **${v}**`;
+                  }
+                  return `- **${v.title}**: ${v.url}`;
+                }).join('\\n');
+                return `### ${pkg}\\n${vulnDetails}\\n`;
+              }).join('\\n');
+
+            const body = `
+            A scheduled \`npm audit\` has found the following vulnerabilities:
+
+            ${JSON.stringify(summary, null, 2)}
+
+            ---
+
+            ### Detailed Vulnerabilities
+
+            ${details}
+
+            Please address these issues. You can run \`npm audit fix\` to attempt to resolve them automatically.
+            `;
+
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title,
+              body,
+              labels: ['security', 'vulnerability', 'npm audit']
+            });
